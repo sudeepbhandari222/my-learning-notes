@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <style>
+      body{
+         background-color: cyan;
+         font-family: Arial, Helvetica, sans-serif;
+         text-align: center;
+      }
+      nav{
+         text-align: center;
+         display: flex;
+         justify-content: space-between;
+         align-items: center;
+         background-color: mediumaquamarine;
+         padding: 10px 30px;
+      }
+      .nav-links{
+         display:flex;
+         list-style:none;
+         gap: 20px;
+      }
+      ul{
+         width:fit-content;
+         margin:auto;
+      }
+      img{
+         border-radius:20px ;
+         border:2px solid blue;
+      }
+      button{
+         border-radius: 10%;
+         border:solid lightseagreen;
+         transition: background-color 0.3s;
+         box-shadow: inset;
+      }
+      button:hover{
+         background-color: sandybrown;
+         cursor: pointer;
+      }
+
+   </style>
+   <title>NovaBladeX-Gaming Mouse</title>
+</head>
+<body>
+   <nav>
+      <h2 class="brand">NovabladeX</h2>
+      <ul class="nav-links">
+         <li><a href="#home">Home</a></li>
+         <li><a href="#feature">Features</a></li>
+         <li><a href="#price">Price</a></li>
+         <li><a href="#contact">Contact</a></li>
+      </ul>
+   </nav>
+   <hr>
+   <h3>Dominate Every Game</h3>
+   <img src="/images/gm.jpg" alt="NovaBladeX Gamin Mouse" title="Best Gaming Mouse There Is">
+   <h4>The most precise gaming mouse ever built</h4>
+   <button type="submit">Buy Now</button>
+   <hr>
+   <h2 id="feature">Features Section</h2>
+   <ul>
+      <li>Ultra Presicion</li>
+      <small><i>25,000 DPI sensor</i></small>
+      <li>Lightning Fast</li>
+      <small><i>1ms response time</i></small>
+      <li>Long Battery</li>
+      <small><i>70 hours battery life</i></small>
+   </ul>
+   <hr>
+   <h3 id="price">Price</h3>
+   <p class="price">At just $79.99 you can have this magical and outstanding mouse for your own.</p>
+   <button class="order">Order Now</button>
+   <hr>
+   <h3 id="contact">Contact</h3>
+   <form>
+      <label for="name">Name: </label><br>
+      <input type="text" class="name" placeholder="Enter Your Name"><br><br>
+      <label for="email">E-mail: </label><br>
+      <input type="emial" class="email" placeholder="Enter Your Email"><br><br>
+      <label for="message">Message: </label><br>
+      <textarea placeholder="Enter Your Message Here"></textarea><br><br>
+   </form>
+</body>
+</html>
