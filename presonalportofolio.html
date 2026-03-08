@@ -2,11 +2,206 @@
 <html>
    <head>
       <style>
-
+         body{
+            background-color: #0a0a0a;
+            font-family: Arial, Helvetica, sans-serif;
+            color:white;
+         }
+         h1{
+            text-align: center;
+            background-color: #383838;
+            color:aliceblue;
+         }
+         nav{
+            text-align: center;
+            background-color: #1a1a1a;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 30px;
+         }
+         .navigation{
+            list-style: none;
+            width:fit-content;
+            margin:0 auto;
+            display:flex;
+            gap: 50px;
+         }
+         .list{
+            font-size: 18px;
+            padding:10px 20px;
+         }
+         .logo{
+            border-radius: 50%;
+            width: 90px;
+            border:2px;
+         }
+         .Sudeep{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+         }
+         a{
+            text-decoration: none;
+            color: white;
+         }
+         .abc{
+            border:none;
+            background-color: #1a1a1a;
+         }
+         .down{
+            font-size: large;
+         }
+         button{
+            border-radius: 10%;
+            transition: background-color 0.3s;
+         }
+         button:hover{
+            background-color: cyan;
+            cursor: pointer;
+         }
+         .hero{
+            text-align: center;
+         }
+         #about {
+            text-align: center;
+         }
+         .skillchapter{
+            display:flex;
+            justify-content: space-evenly;
+            align-items: center;
+            padding:20px 30px;
+         }
+         .skill-box{
+            background-color: #141313;
+            padding:20px 150px;
+            text-align: center;
+         }
+         .prjct{
+            display:flex;
+            justify-content: space-between;
+            padding:15px 30px;
+            align-items: center;
+         }
+         .PROJECT{
+            background-color: #201a1a;
+            padding: 20px 90px;
+            text-align: center;
+         }
+         .link{
+            text-decoration: none;
+            color:azure;
+         }
+         form{
+            padding:20px 30px;
+            text-align: center;
+         }
+         label{
+            padding: 10px 5px;
+            font-family: 'Times New Roman', Times, serif;
+         }
+         input,textarea{
+            width: 300px;
+         }
+         textarea{
+            vertical-align: top;
+         }
+         .submit{
+            border-radius: 25px;
+            border:none;
+            width:100px;
+            height:20px;
+         }
       </style>
-      <title>My portofolio</title>
+      <title>My portfolio</title>
    </head>
    <body>
-      
+      <nav>
+         <div class="Sudeep">
+            <img src="/download.webp" class="logo">
+            <h2><strong>Sudeep Bhandari</strong></h2>
+         </div>
+         <ul class="navigation">
+            <li class="list"><button class="abc"><a href="#about" class="down">About</a></button></li>
+            <li class="list"><button class="abc"><a href="#skills" class="down">Skills</a></button></li>
+            <li class="list"><button class="abc"><a href="#projects" class="down">Projects</a></button></li>
+            <li class="list"><button class="abc"><a href="#contact" class="down">Contact</a></button></li>
+         </ul>
+      </nav>
+      <hr>
+      <div class="hero">
+         <h1>Welcome To My Portfolio</h1>
+         <img src="/srk.webp">
+         <p class="short">
+            Hello, My name is Sudeep Bhandari and I am an aspiring Web Developer.
+         </p>
+         <button>Hire Me</button>
+         <button>View My Work</button>
+      </div>
+      <hr>
+      <div id="about">
+         <h1>About Me</h1>
+         <p class="description">
+            Hello, My name is Sudeep Bhandari and    I am an aspiring Web Developer. I am    hungry for the knowledge and want to    keep getting better each passing day.    My main goal is to be better than I    was yesterday. Even though I am an    aspiring Web Dev. you can count on me    as my skills are in a very broad    spectrum and I am not limited to one    thing only.
+         </p>
+         <strong>Here are some fun facts about me:</strong>
+         <ul>
+            <li>Great Problem Solving Skill</li>
+            <li>Hungry Learner</li>
+            <li>Quick Learner</li>
+         </ul>
+      </div>
+      <hr>
+      <div id="skills">
+         <h1>Skills</h1>
+            <div class= "skillchapter">
+               <div class="skill-box">
+                 <h4>HTML</h4>
+                 <p>Beginner</p>
+               </div>
+               <div class="skill-box">
+                 <h4>CSS</h4>
+                 <p>Beginner</p>
+               </div>
+               <div class="skill-box">
+                 <h4>Programming</h4>
+                 <p>Intermediate</p>
+               </div>
+            </div>
+      </div>
+      <hr>
+      <div id="projects">
+         <h1>Projects</h1>
+          <div class="prjct">
+               <div class="PROJECT">
+                  <h4>Personal Portfolio Profile</h4>
+                  <p>A Simple HTML Profile</p>
+                  <button><a href="/Portfolio.html" class="link" title="look at my work" target="_blank">View</a></button>
+               </div>
+               <div class="PROJECT">
+                  <h4>Restaurant Menu</h4>
+                  <p>A Very Basic Restaurant's Menu</p>
+                  <button><a href="/Restaurant4.html" class="link" title="look at my work" target="_blank">View</a></button>
+               </div>
+               <div class="PROJECT">
+                  <h4>Landing Page For Gaming Mouse</h4>
+                  <p>A Very Simple Landing Page For Mouse</p>
+                  <button><a href="/landingpage.html" class="link" title="look at my work" target="_blank">View</a></button>
+               </div>
+            </div>
+      </div>
+      <hr>
+      <section id="contact">
+         <h1>Contact</h1>
+         <form>
+            <label for="name">Name: </label>
+            <input type="text" placeholder="Your Name"><br><br>
+            <label for="email">Email: </label>
+            <input type="email" placeholder="Your Email"><br><br>
+            <label for="message">Message: </label>
+            <textarea placeholder="Leave a message here"></textarea><br><br>
+            <button class="submit">Submit</button>
+         </form>
+      </section>
    </body>
 </html>
