@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <style>
       body{
          display: flex;
@@ -41,6 +42,19 @@
       .buttons{
          display:flex;
          gap:20px;
+      }
+      @media(max-width: 300px) {
+         img{
+            width:70%;
+         }
+         button{
+            width: 120px;
+            font-size: 12px;
+         }
+         .buttons{
+            flex-direction: column;
+            align-items: center;
+         }
       }
    </style>
    <title>Google.com</title>
