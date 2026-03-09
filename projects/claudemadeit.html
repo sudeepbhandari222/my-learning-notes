@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Notes Hub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg:       #080808;
+      --surface:  #111111;
+      --surface2: #181818;
+      --border:   #222222;
+      --accent:   #00e5ff;
+      --accent2:  #7b61ff;
+      --text:     #f0f0f0;
+      --muted:    #666666;
+      --card-glow: rgba(0, 229, 255, 0.08);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* ── Custom Cursor ── */
+    #cursor {
+      position: fixed;
+      width: 10px; height: 10px;
+      background: var(--accent);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s, width 0.2s, height 0.2s, opacity 0.2s;
+      mix-blend-mode: difference;
+    }
+    #cursor-ring {
+      position: fixed;
+      width: 36px; height: 36px;
+      border: 1px solid rgba(0,229,255,0.4);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: transform 0.12s ease, width 0.2s, height 0.2s;
+    }
+    body:hover #cursor { opacity: 1; }
+
+    /* ── Noise overlay ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.4;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 22px 60px;
+      background: rgba(8,8,8,0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      transition: padding 0.3s;
+    }
+    .nav-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.2rem;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .nav-logo span {
+      color: var(--accent);
+    }
+    .nav-dot {
+      width: 7px; height: 7px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.7); }
+    }
+    .nav-links {
+      display: flex;
+      list-style: none;
+      gap: 40px;
+      align-items: center;
+    }
+    .nav-links a {
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 0;
+      width: 0; height: 1px;
+      background: var(--accent);
+      transition: width 0.3s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-links a:hover::after { width: 100%; }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 140px 60px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-bg-text {
+      position: absolute;
+      top: 50%;
+      right: -20px;
+      transform: translateY(-50%);
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(120px, 18vw, 260px);
+      font-weight: 800;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(255,255,255,0.03);
+      pointer-events: none;
+      user-select: none;
+      letter-spacing: -0.05em;
+      white-space: nowrap;
+    }
+    .hero-tag {
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.2s forwards;
+    }
+    .hero-tag::before {
+      content: '';
+      display: block;
+      width: 32px; height: 1px;
+      background: var(--accent);
+    }
+    .hero-title {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(48px, 7vw, 96px);
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -0.04em;
+      margin-bottom: 28px;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.4s forwards;
+    }
+    .hero-title em {
+      font-style: normal;
+      color: transparent;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-sub {
+      font-size: clamp(14px, 1.5vw, 17px);
+      color: var(--muted);
+      max-width: 480px;
+      line-height: 1.7;
+      margin-bottom: 48px;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.6s forwards;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 16px;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.8s forwards;
+    }
+    .btn-primary {
+      padding: 14px 32px;
+      background: var(--accent);
+      color: #000;
+      border: none;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      border-radius: 2px;
+      cursor: none;
+      text-decoration: none;
+      display: inline-block;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(0,229,255,0.3);
+    }
+    .btn-ghost {
+      padding: 14px 32px;
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+      font-family: 'Syne', sans-serif;
+      font-weight: 600;
+      font-size: 0.85rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      border-radius: 2px;
+      cursor: none;
+      text-decoration: none;
+      display: inline-block;
+      transition: border-color 0.2s, color 0.2s, transform 0.2s;
+    }
+    .btn-ghost:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      transform: translateY(-2px);
+    }
+    .hero-stats {
+      position: absolute;
+      bottom: 60px;
+      right: 60px;
+      display: flex;
+      gap: 48px;
+      opacity: 0;
+      animation: fadeUp 0.8s 1s forwards;
+    }
+    .stat { text-align: right; }
+    .stat-number {
+      font-family: 'Syne', sans-serif;
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+    .scroll-indicator {
+      position: absolute;
+      bottom: 40px;
+      left: 60px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      opacity: 0;
+      animation: fadeUp 0.8s 1.2s forwards;
+    }
+    .scroll-line {
+      width: 40px; height: 1px;
+      background: var(--muted);
+      position: relative;
+      overflow: hidden;
+    }
+    .scroll-line::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: var(--accent);
+      animation: scanline 2s infinite;
+    }
+    @keyframes scanline {
+      to { left: 100%; }
+    }
+
+    /* ── DIVIDER ── */
+    .section-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+      margin: 0 60px;
+    }
+
+    /* ── SUBJECTS SECTION ── */
+    .subjects {
+      padding: 100px 60px;
+      position: relative;
+    }
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 60px;
+    }
+    .section-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(28px, 4vw, 48px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+    }
+    .section-count {
+      font-family: 'Syne', sans-serif;
+      font-size: 5rem;
+      font-weight: 800;
+      color: transparent;
+      -webkit-text-stroke: 1px var(--border);
+      line-height: 1;
+    }
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 2px;
+    }
+    .card {
+      background: var(--surface);
+      padding: 40px;
+      border: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s, transform 0.3s;
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    .card.visible {
+      animation: fadeUp 0.6s forwards;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--card-glow);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .card:hover { border-color: rgba(0,229,255,0.3); }
+    .card:hover::before { opacity: 1; }
+    .card-number {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      color: var(--muted);
+      margin-bottom: 32px;
+    }
+    .card-icon {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      display: block;
+    }
+    .card-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+    }
+    .card-desc {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 32px;
+    }
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 32px;
+    }
+    .tag {
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      border-radius: 2px;
+    }
+    .card-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--accent);
+      font-family: 'Syne', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: gap 0.2s;
+    }
+    .card-link:hover { gap: 16px; }
+    .card-link svg {
+      transition: transform 0.2s;
+    }
+    .card-link:hover svg { transform: translateX(4px); }
+    .card-corner {
+      position: absolute;
+      top: 0; right: 0;
+      width: 60px; height: 60px;
+      border-left: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .card:hover .card-corner { opacity: 1; }
+
+    /* coming soon card */
+    .card-soon {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+    .soon-badge {
+      position: absolute;
+      top: 20px; right: 20px;
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 4px 8px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+
+    /* ── ABOUT STRIP ── */
+    .about-strip {
+      padding: 80px 60px;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+    .about-text p {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+    .about-text p strong {
+      color: var(--text);
+      font-weight: 400;
+    }
+    .about-features {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    .feature {
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      transition: border-color 0.3s;
+    }
+    .feature:hover { border-color: rgba(0,229,255,0.3); }
+    .feature-icon { font-size: 1.4rem; margin-bottom: 12px; }
+    .feature-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .feature-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 48px 60px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1rem;
+      letter-spacing: -0.02em;
+    }
+    .footer-logo span { color: var(--accent); }
+    .footer-copy {
+      font-size: 0.75rem;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+    .footer-links {
+      display: flex;
+      gap: 32px;
+    }
+    .footer-links a {
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--accent); }
+
+    /* ── GRADE SELECTOR ── */
+    .grade-selector {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 48px;
+      flex-wrap: wrap;
+    }
+    .grade-btn {
+      padding: 10px 28px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-family: 'Syne', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border-radius: 2px;
+      cursor: none;
+      transition: all 0.2s;
+    }
+    .grade-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .grade-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #000;
+    }
+    .grade-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+    .cards-grid.hidden { display: none; }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── RESPONSIVE — Tablet ── */
+    @media (max-width: 768px) {
+      body { cursor: auto; }
+      #cursor, #cursor-ring { display: none; }
+      .grade-btn { cursor: pointer; }
+      nav { padding: 18px 24px; }
+      .nav-links { display: none; }
+      .hero { padding: 120px 24px 100px; }
+      .hero-bg-text { font-size: 28vw; opacity: 0.5; }
+      .hero-stats { right: 24px; bottom: 32px; gap: 24px; }
+      .hero-stats .stat-number { font-size: 1.5rem; }
+      .scroll-indicator { left: 24px; }
+      .section-divider { margin: 0 24px; }
+      .subjects { padding: 60px 24px; }
+      .grade-selector { gap: 8px; }
+      .grade-btn { padding: 8px 18px; font-size: 0.75rem; }
+      .cards-grid { grid-template-columns: 1fr 1fr; gap: 2px; }
+      .about-strip { padding: 60px 24px; grid-template-columns: 1fr; gap: 40px; }
+      .about-features { grid-template-columns: 1fr 1fr; }
+      footer { padding: 32px 24px; flex-direction: column; gap: 20px; text-align: center; }
+      .footer-links { flex-wrap: wrap; justify-content: center; }
+      .section-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+      .section-count { font-size: 3rem; }
+    }
+
+    /* ── RESPONSIVE — Mobile ── */
+    @media (max-width: 480px) {
+      nav { padding: 16px 20px; }
+      .nav-logo { font-size: 1rem; }
+      .hero { padding: 100px 20px 120px; }
+      .hero-tag { font-size: 0.65rem; }
+      .hero-title { font-size: clamp(36px, 11vw, 56px); }
+      .hero-sub { font-size: 13px; }
+      .hero-actions { flex-direction: column; width: 100%; }
+      .btn-primary, .btn-ghost { text-align: center; width: 100%; padding: 14px 20px; }
+      .hero-stats {
+        position: relative;
+        bottom: auto; right: auto;
+        flex-direction: row;
+        justify-content: center;
+        margin-top: 32px;
+        gap: 40px;
+      }
+      .hero-stats .stat { text-align: center; }
+      .scroll-indicator { display: none; }
+      .subjects { padding: 48px 20px; }
+      .grade-selector { gap: 8px; }
+      .grade-btn { padding: 8px 14px; font-size: 0.7rem; flex: 1; text-align: center; }
+      .cards-grid { grid-template-columns: 1fr; }
+      .card { padding: 28px 24px; }
+      .section-header { margin-bottom: 32px; }
+      .section-title { font-size: 1.8rem; }
+      .about-strip { padding: 48px 20px; }
+      .about-features { grid-template-columns: 1fr; }
+      footer { padding: 28px 20px; gap: 16px; }
+      .footer-copy { font-size: 0.7rem; }
+    }
+
+    /* ── RESPONSIVE — Very small phones ── */
+    @media (max-width: 360px) {
+      .hero-title { font-size: 32px; }
+      .grade-btn { padding: 7px 10px; font-size: 0.65rem; }
+      .card { padding: 22px 18px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Custom Cursor -->
+  <div id="cursor"></div>
+  <div id="cursor-ring"></div>
+
+  <!-- NAV -->
+  <nav id="navbar">
+    <div class="nav-logo">
+      <div class="nav-dot"></div>
+      Notes<span>Hub</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#hero">Home</a></li>
+      <li><a href="#subjects">Subjects</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="https://github.com/sudeepbhandari222" target="_blank">GitHub ↗</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <div class="hero-bg-text">NOTES</div>
+    <div class="hero-tag">Study Resource · Grade XI · Nepal</div>
+    <h1 class="hero-title">
+      Study<br/><em>Smarter.</em><br/>Not Harder.
+    </h1>
+    <p class="hero-sub">
+      A carefully curated collection of notes for Grade XI students. Clear, concise, and built to help you actually understand — not just memorize.
+    </p>
+    <div class="hero-actions">
+      <a href="#subjects" class="btn-primary">Browse Subjects</a>
+      <a href="https://github.com/sudeepbhandari222" target="_blank" class="btn-ghost">GitHub ↗</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-number" id="counter-subjects">0</div>
+        <div class="stat-label">Subjects</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number" id="counter-files">0</div>
+        <div class="stat-label">Files</div>
+      </div>
+    </div>
+    <div class="scroll-indicator">
+      <div class="scroll-line"></div>
+      Scroll to explore
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- SUBJECTS -->
+  <section class="subjects" id="subjects">
+    <div class="section-header">
+      <div>
+        <div class="section-label">Available Now</div>
+        <h2 class="section-title">Browse<br/>Subjects</h2>
+      </div>
+      <div class="section-count" id="active-count">01</div>
+    </div>
+
+    <!-- Grade Selector -->
+    <div class="grade-label">Select Your Grade</div>
+    <div class="grade-selector">
+      <button class="grade-btn active" onclick="selectGrade(this, 'grade10')">Grade 10</button>
+      <button class="grade-btn" onclick="selectGrade(this, 'grade11')">Grade 11</button>
+      <button class="grade-btn" onclick="selectGrade(this, 'grade12')">Grade 12</button>
+    </div>
+
+    <!-- GRADE 10 CARDS -->
+    <div class="cards-grid" id="grade10">
+
+      <!-- Computer Science Card -->
+      <div class="card" data-delay="0">
+        <div class="card-corner"></div>
+        <div class="card-number">01 — Active</div>
+        <span class="card-icon">💻</span>
+        <h3 class="card-title">Computer Science</h3>
+        <p class="card-desc">Covers core CS concepts including programming fundamentals, data structures, algorithms, and practical coding exercises.</p>
+        <div class="card-tags">
+          <span class="tag">Programming</span>
+          <span class="tag">Theory</span>
+          <span class="tag">Grade 10</span>
+        </div>
+        <a href="https://drive.google.com/drive/folders/1h7OXcMWk54J0mR4M9VRIKvSxLq69Jy2I" target="_blank" class="card-link">
+          Access Notes
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+      </div>
+      <div class="card card-soon" data-delay="100">
+        <div class="soon-badge">Coming Soon</div>
+        <div class="card-number">02 — Pending</div>
+        <span class="card-icon">📐</span>
+        <h3 class="card-title">Mathematics</h3>
+        <p class="card-desc">Algebra, geometry and arithmetic — structured notes for Grade 10 math.</p>
+        <div class="card-tags"><span class="tag">Algebra</span><span class="tag">Geometry</span><span class="tag">Grade 10</span></div>
+      </div>
+      <div class="card card-soon" data-delay="200">
+        <div class="soon-badge">Coming Soon</div>
+        <div class="card-number">03 — Pending</div>
+        <span class="card-icon">⚛️</span>
+        <h3 class="card-title">Science</h3>
+        <p class="card-desc">Physics, chemistry and biology fundamentals for Grade 10 students.</p>
+        <div class="card-tags"><span class="tag">Physics</span><span class="tag">Chemistry</span><span class="tag">Grade 10</span></div>
+      </div>
+      <div class="card card-soon" data-delay="300">
+        <div class="soon-badge">Coming Soon</div>
+        <div class="card-number">04 — Pending</div>
+        <span class="card-icon">📖</span>
+        <h3 class="card-title">English</h3>
+        <p class="card-desc">Grammar, literature and writing skills for Grade 10 English.</p>
+        <div class="card-tags"><span class="tag">Grammar</span><span class="tag">Literature</span><span class="tag">Grade 10</span></div>
+      </div>
+    </div>
+
+    <!-- GRADE 11 CARDS -->
+    <div class="cards-grid hidden" id="grade11">
+      <div class="card card-soon" data-delay="0">
+        <div class="soon-badge">Coming Soon</div>
+        <div class="card-number">01 — Pending</div>
+        <span class="card-icon">💻</span>
+        <h3 class="card-title">Computer Science</h3>
+        <p class="card-desc">Grade 11 CS — HTML, CSS, programming fundamentals and more.</p>
+        <div class="card-tags"><span class="tag">Web Dev</span><span class="tag">Theory</span><span class="tag">Grade 11</span></div>
+      </div>
+      <div class="card card-soon" data-delay="100">
+        <div class="soon-badge">Coming Soon</div>
+        <div class="card-number">02 — Pending</div>
+        <span class="card-icon">📐</span>
+        <h3 class="card-title">Mathematics</h3>
+        <p class="card-desc">Calculus, algebra and trigonometry for Grade 11 students.</p>
+        <div class="card-tags"><span class="tag">Calculus</span><span class="tag">Algebra</span><span class="tag">Grade 11</span></div>
+      </div>
+      <div class="card card-soon" data-delay="200">
+        <div class="soon-badge">Coming Soon</div>
+        <div class="card-number">03 — Pending</div>
+        <span class="card-icon">⚛️</span>
+        <h3 class="card-title">Physics</h3>
+        <p class="card-desc">Mechanics, waves and electricity for Grade 11 students.</p>
+        <div class="card-tags"><span class="tag">Mechanics</span><span class="tag">Waves</span><span class="tag">Grade 11</span></div>
+      </div>
+      <div class="card card-soon" data-delay="300">
+        <div class="soon-badge">Coming Soon</div>
+        <div class="card-number">04 — Pending</div>
+        <span class="card-icon">🧪</span>
+        <h3 class="card-title">Chemistry</h3>
+        <p class="card-desc">Organic and inorganic chemistry concepts for Grade 11.</p>
+        <div class="card-tags"><span class="tag">Organic</span><span class="tag">Inorganic</span><span class="tag">Grade 11</span></div>
+      </div>
+    </div>
+
+    <!-- GRADE 12 CARDS -->
+    <div class="cards-grid hidden" id="grade12">
+      <div class="card card-soon" data-delay="0">
+        <div class="soon-badge">Coming Soon</div>
+        <div class="card-number">01 — Pending</div>
+        <span class="card-icon">💻</span>
+        <h3 class="card-title">Computer Science</h3>
+        <p class="card-desc">Advanced programming, databases and networking for Grade 12.</p>
+        <div class="card-tags"><span class="tag">Advanced</span><span class="tag">Databases</span><span class="tag">Grade 12</span></div>
+      </div>
+      <div class="card card-soon" data-delay="100">
+        <div class="soon-badge">Coming Soon</div>
+        <div class="card-number">02 — Pending</div>
+        <span class="card-icon">📐</span>
+        <h3 class="card-title">Mathematics</h3>
+        <p class="card-desc">Advanced calculus and statistics for Grade 12 students.</p>
+        <div class="card-tags"><span class="tag">Calculus</span><span class="tag">Statistics</span><span class="tag">Grade 12</span></div>
+      </div>
+      <div class="card card-soon" data-delay="200">
+        <div class="soon-badge">Coming Soon</div>
+        <div class="card-number">03 — Pending</div>
+        <span class="card-icon">⚛️</span>
+        <h3 class="card-title">Physics</h3>
+        <p class="card-desc">Electromagnetism and modern physics for Grade 12 students.</p>
+        <div class="card-tags"><span class="tag">Electromagnetism</span><span class="tag">Modern Physics</span><span class="tag">Grade 12</span></div>
+      </div>
+      <div class="card card-soon" data-delay="300">
+        <div class="soon-badge">Coming Soon</div>
+        <div class="card-number">04 — Pending</div>
+        <span class="card-icon">🧪</span>
+        <h3 class="card-title">Chemistry</h3>
+        <p class="card-desc">Advanced organic and inorganic chemistry for Grade 12.</p>
+        <div class="card-tags"><span class="tag">Organic</span><span class="tag">Advanced</span><span class="tag">Grade 12</span></div>
+      </div>
+    </div>
+
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ABOUT STRIP -->
+  <section class="about-strip" id="about">
+    <div class="about-text">
+      <div class="section-label" style="margin-bottom:16px">About This Project</div>
+      <h2 class="section-title" style="margin-bottom:24px">Built for<br/>students,<br/>by a student.</h2>
+      <p>Notes Hub was created by <strong>Sudeep Bhandari</strong>, a Grade XI student from Oxford Secondary School, Butwal, Nepal.</p>
+      <p>The goal is simple — make quality study material <strong>free and accessible</strong> for every student who needs it.</p>
+    </div>
+    <div class="about-features">
+      <div class="feature">
+        <div class="feature-icon">📁</div>
+        <div class="feature-title">Organized</div>
+        <div class="feature-desc">Notes sorted by subject and topic for easy navigation.</div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🆓</div>
+        <div class="feature-title">Free Forever</div>
+        <div class="feature-desc">No paywalls. No sign-ups. Just open and study.</div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🔄</div>
+        <div class="feature-title">Updated</div>
+        <div class="feature-desc">New notes added regularly as subjects are covered.</div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">📱</div>
+        <div class="feature-title">Any Device</div>
+        <div class="feature-desc">Works on mobile, tablet and desktop seamlessly.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">Notes<span>Hub</span></div>
+    <div class="footer-copy">© 2026 Sudeep Bhandari · All rights reserved</div>
+    <div class="footer-links">
+      <a href="https://github.com/sudeepbhandari222" target="_blank">GitHub</a>
+      <a href="#hero">Back to top ↑</a>
+    </div>
+  </footer>
+
+  <script>
+    // ── Grade Selector ──
+    function selectGrade(btn, gradeId) {
+      // update buttons
+      document.querySelectorAll('.grade-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      // hide all grids
+      document.querySelectorAll('.cards-grid').forEach(g => g.classList.add('hidden'));
+      // show selected
+      const grid = document.getElementById(gradeId);
+      grid.classList.remove('hidden');
+      // re-trigger card animations
+      grid.querySelectorAll('.card').forEach(c => {
+        c.classList.remove('visible');
+        void c.offsetWidth;
+        const delay = c.dataset.delay || 0;
+        setTimeout(() => c.classList.add('visible'), Number(delay));
+      });
+    }
+
+    // ── Custom Cursor ──
+    const cursor = document.getElementById('cursor');
+    const ring   = document.getElementById('cursor-ring');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      cursor.style.left = mx + 'px';
+      cursor.style.top  = my + 'px';
+    });
+
+    function animateRing() {
+      rx += (mx - rx) * 0.12;
+      ry += (my - ry) * 0.12;
+      ring.style.left = rx + 'px';
+      ring.style.top  = ry + 'px';
+      requestAnimationFrame(animateRing);
+    }
+    animateRing();
+
+    document.querySelectorAll('a, button').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        cursor.style.width  = '20px';
+        cursor.style.height = '20px';
+        ring.style.width    = '60px';
+        ring.style.height   = '60px';
+      });
+      el.addEventListener('mouseleave', () => {
+        cursor.style.width  = '10px';
+        cursor.style.height = '10px';
+        ring.style.width    = '36px';
+        ring.style.height   = '36px';
+      });
+    });
+
+    // ── Navbar shrink on scroll ──
+    window.addEventListener('scroll', () => {
+      const nav = document.getElementById('navbar');
+      if (window.scrollY > 60) {
+        nav.style.padding = '14px 60px';
+      } else {
+        nav.style.padding = '22px 60px';
+      }
+    });
+
+    // ── Counter animation ──
+    function animateCounter(el, target, duration) {
+      let start = 0;
+      const step = target / (duration / 16);
+      const timer = setInterval(() => {
+        start += step;
+        if (start >= target) { el.textContent = target; clearInterval(timer); }
+        else el.textContent = Math.floor(start);
+      }, 16);
+    }
+
+    const counterObserver = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          animateCounter(document.getElementById('counter-subjects'), 1, 1200);
+          animateCounter(document.getElementById('counter-files'), 12, 1600);
+          counterObserver.disconnect();
+        }
+      });
+    });
+    counterObserver.observe(document.querySelector('.hero-stats'));
+
+    // ── Card scroll reveal ──
+    const cardObserver = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          const delay = e.target.dataset.delay || 0;
+          setTimeout(() => e.target.classList.add('visible'), Number(delay));
+        }
+      });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll('.card').forEach(c => cardObserver.observe(c));
+
+    // ── Smooth active nav highlight ──
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-links a');
+
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(s => {
+        if (window.scrollY >= s.offsetTop - 200) current = s.id;
+      });
+      navLinks.forEach(a => {
+        a.style.color = a.getAttribute('href') === '#' + current ? 'var(--text)' : '';
+      });
+    });
+  </script>
+
+</body>
+</html>

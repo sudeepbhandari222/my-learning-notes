@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <style>
+      body{
+         background-color: #0a0a0a;
+         font-family: Arial, Helvetica, sans-serif;
+         text-align: center;
+      }
+      .logo{
+         border-radius: 50%;
+         width: 50px;
+         height: 50px;
+         border: none;
+      }
+      nav{
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         padding: 20px 15px;
+      }
+      .navlinks{
+         display: flex;
+         justify-content: space-between;
+         align-items: center;
+         list-style: none;
+         color: #000000;
+      }
+      a{
+         text-decoration: none;
+      }
+      .card-container{
+         display: flex;
+         justify-content: center;
+         gap: 20px;
+         flex-wrap: wrap;
+      }
+      .card{
+         background-color: #1a1a1a;
+         padding:30px;
+         border-radius: 15px;
+         width: 250px;
+         text-align: center;
+      }
+      footer{
+         background-color: #111111;
+         color: white;
+         text-align: center;
+         padding: 20px;
+         margin-top: 50px;
+      }
+   </style>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Notes Hub</title>
+</head>
+<body>
+   <nav>
+      <img src="/projects/logo.webp" class="logo">
+      <h1 class="notes">Notes Hub</h1>
+      <div class="navigation">
+         <ul class="navlinks">
+            <li><button class="links"><a href="#home">Home</a></button></li>
+            <li><button class="links"><a href="#about">About</a></button></li>
+            <li><button class="links"><a href="#contact">Contact</a></button></li>
+         </ul>
+      </div>
+   </nav>
+   <hr>
+   <section class="hero">
+      <h2>Your Study Companion</h2>
+      <strong>To help all those students in need. Job of Notes Hub is indeed</strong>
+      <p>A collection of well organized notes to help you study smarter. Select a subject below to get started!!</p>
+      <button class="getstarted"><a href="#notes">Get Started</a></button>
+   </section>
+   <hr>
+   <div id="cards">
+      <h2>Subjects</h2>
+      <div class="card-container">
+         <div class="container">
+            <h3>Computer Science</h3>
+            <p>
+            Notes covering most of the basic syllabus of various classes.
+            </p>
+            <a href="https://drive.google.com/drive/folders/1h7OXcMWk54J0mR4M9VRIKvSxLq69Jy2I?usp=drive_link" target="_blank"><button>Access Notes</button></a>
+         </div>
+      </div>
+   </div>
+   <hr>
+   <footer>
+      <p>© 2026 Note Hub. Thankyou For Visiting Us</p>
+      <a href="https://github.com/sudeepbhandari222" target="_blank">GitHub</a>
+   </footer>
+</body>
+</html>
