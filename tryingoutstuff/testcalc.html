@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <style>
+
+   </style>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Calc</title>
+</head>
+<body>
+   <script>
+      function add(){
+         let A = Number(document.getElementById("number1").value);
+         let B = Number(document.getElementById("number2").value);
+         X = A + B
+         document.getElementById("result").innerText = X;
+      }
+      function sub(){
+         let A = Number(document.getElementById("number1").value);
+         let B = Number(document.getElementById("number2").value);
+         X = A - B
+         document.getElementById("result").innerText = X;
+      }
+      function mult(){
+         let A = Number(document.getElementById("number1").value);
+         let B = Number(document.getElementById("number2").value);
+         X = A * B
+         document.getElementById("result").innerText = X;
+      }
+      function div(){
+         let A = Number(document.getElementById("number1").value);
+         let B = Number(document.getElementById("number2").value);
+         X = A / B
+         document.getElementById("result").innerText = X;
+      }
+   </script>
+   <div>
+      <h2>Calculator Prototype</h2>
+      <form>
+         <input type="number" placeholder="First Number" id="number1">
+         <input type="number" placeholder="Second Number" id="number2">
+      </form>
+   </div>
+   <button onclick="add()">Add</button>
+   <button onclick="sub()">Sub</button>
+   <button onclick="mult()">Mult</button>
+   <button onclick="div()">Div</button>
+   <hr>
+   <p id="result"></p>
+</body>
+</html>
