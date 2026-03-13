@@ -1,11 +1,122 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+   <style>
+      body{
+         color: white;
+         background-color: rgb(99, 98, 98);
+         font-family: Arial, Helvetica, sans-serif;
+         text-align: center;
+         height: 100vh;
+         margin:0;
+         padding:0px;
+      }
+      h2{
+         font-weight: 300;
+         padding:50px
+      }
+      .option{
+         margin:20px;
+         padding: 20px;
+         display:flex;
+         flex-direction: column;
+         justify-content: center;
+         align-items: center;
+      }
+      button{
+         padding:10px;
+         margin:15px;
+         width:220px;
+         height:40px;
+         border:none;
+         border-radius: 25px;
+      }
+      .butt{
+         background-color: rgb(197, 171, 171);
+         transition: background-color 0.3s;
+      }
+      .butt:hover{
+         cursor:pointer;
+         background-color:rgb(157, 233, 233);
+         color:rgb(138, 15, 68);
+      }
+      .buttt{
+         transition:background-color 0.3s;
+      }
+      .buttt:hover{
+         background-color: rgb(216, 150, 69);
+         cursor: pointer;
+      }
+      p{
+         text-align: left;
+         font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      }
+   </style>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <title>Quizard</title>
 </head>
 <body>
-   
+
+   <p id="score"> Score: 0</p>
+   <h2 id="question"></h2>
+   <hr>
+   <div class="option">   
+      <button  class="butt" onclick="check(this)" id="num1"></button>
+      <button class="butt"  onclick="check(this)" id="num2"></button>
+      <button  class="butt" onclick="check(this)" id="num3"></button>
+      <button  class="butt" onclick="check(this)" id="num4"></button>
+   </div>
+   <button class="buttt" onclick="next()">Next</button>
+   <hr>
+   <script>
+      let quiz = [
+         {
+            text:"What is the capital city of Nepaly?",
+            answer:["Pokhara","Kathmandu","Biratnagar","Lalitpur"],
+            correct:"Kathmandu"
+         },
+         {
+            text:"Who invented WWW?",
+            answer: ["Charles Babbage","Lady Gaga","RDj","Tim Berners Lee"],
+            correct:"Tim Berners Lee"
+         },
+         {
+            text: "Who is the new PM of Nepal?",
+            answer: ["Balen Shah","KP Oli","Modi","Sushila Karki"],
+            correct: "Balen Shah"
+         },
+         {
+            text:"What is th full form of HTML?",
+            answer:["Hyper Tamil Market Lab","Hyper Text Markup Language","Hello Tello Morning Lelo","Happy Tamil Market Lady"],
+            correct:"Hyper Text Markup Language"
+         },
+         {
+            text:"What is Coding?",
+            answer:["Life","Hobby","Side Hustle","Fun"],
+            correct:"Fun"
+         }
+      ]
+      let current=0
+      let score=0
+      function loadquestion(){
+         document.getElementById("question").innerText = quiz[current].text;
+         for(let i=0; i<4; i++){
+         buttons[i].innerText = quiz[current].answer[i];
+         }
+      }
+      let buttons = document.querySelectorAll(".butt");
+      loadquestion();
+      function check(btn){
+         if(btn.innerText===quiz[current].correct){
+            score++;
+            document.getElementById("score").innerText = "Score: "+ score;
+         }
+      }
+      function next(){
+         current++;
+         loadquestion();
+      }
+   </script>
 </body>
 </html>
