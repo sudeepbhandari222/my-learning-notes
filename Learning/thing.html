@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Something</title>
+   <style>
+      .card{
+         width: 320PX;
+         height: 280px;
+         background: #fff;
+         position: relative;
+         overflow: hidden;
+         border: 3px solid hotpink;
+         transition: all 0.3s cubic-bezier(0.23,1,0.32,1);
+      }
+      .wave{
+         position: absolute;
+         bottom:-110%;
+         left: 0;
+         width: 100%;
+         height: 100%;
+         background: #ff007a;
+         transition: 0.8s cubic-bezier(0.4,0,0.2,1);
+         border-radius: 40%;
+         opacity: 0.6;
+      }
+      .card:hover .wave{
+         bottom: 0;
+         transform: rotate(360deg);
+         border-radius: 0;
+         opacity: 1;
+      }
+      .card:hover h3{
+         color: #fff;
+         transition-delay: 0.1s;
+
+      }
+   </style>
+</head>
+<body>
+   <div class="card">
+      <div class="wave"></div>
+      <h3>Hover Me</h3>
+   </div>
+</body>
+</html>
