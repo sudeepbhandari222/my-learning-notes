@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Document</title>
+   <style>
+      .wave{
+         border: 3px solid orangered;
+         border-radius: 25px;
+         height: 300px;
+         width: 250px;
+         text-align: center;
+         position: relative;
+         overflow:hidden;
+         transition: all 0.78 cubic-bezier(0.075, 0.82, 0.165, 1);
+      }
+      .card{
+         background-color: yellow;
+         border: 1px solid none;
+         border-radius:25px;
+         position: absolute;
+         height: 100%;
+         width: 100%;
+         bottom: -110%;
+         transition: all 0.8s cubic-bezier(0.075, 0.82, 0.165, 1);
+         opacity: 0.6;
+      }
+      .wave:hover .card{
+         bottom: 0;
+         transform: rotate(360deg);
+         opacity: 1;
+         border-radius: 25px;
+      }
+   </style>
+</head>
+<body>
+   <div class="wave">
+      <div class="card">
+         <ul>
+            <li>Home</li>
+            <li>About Us</li>
+            <li>Skills</li>
+            <li>Contact</li>
+            <li></li>
+         </ul>
+      </div>
+      <h2>Hover Me</h2>
+   </div>
+</body>
+</html>
